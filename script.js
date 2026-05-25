@@ -31,6 +31,7 @@ let currentCategory = 'all'; // 当前选中的分类标识，默认为全部
 let currentSearch = '';      // 当前搜索关键词，默认为空字符串
 let editingNoteId = null;    // 当前正在编辑的笔记ID，null表示新建笔记
 let selectedNote = null;     // 当前选中的笔记对象，用于详情展示和编辑
+let uploadedFiles = [];      // 当前上传的文件列表（用于新建/编辑时临时存储）
 
 // ========================================
 // 数据加载与保存函数
@@ -306,8 +307,84 @@ function showNoteDetail(id) {
     // 更新笔记正文内容
     document.getElementById('detailBody').textContent = note.content;
     
+    // 渲染附件列表
+    renderDetailFiles(note.files || []);
+    
     // 显示详情面板
     document.getElementById('detailPanel').style.display = 'flex';
+}
+
+/**
+ * 在详情面板中渲染附件列表
+ * @param {Array} files - 文件数组
+ */
+function renderDetailFiles(files) {
+    const filesContainer = document.getElementById('detailFiles');
+    
+    if (!files || files.length === 0) {
+        filesContainer.innerHTML = '';
+        filesContainer.style.display = 'none';
+        return;
+    }
+    
+    filesContainer.style.display = 'block';
+    filesContainer.innerHTML = `
+        <div class="detail-section">
+            <h4>📎 附件 (${files.length})</h4>
+            <div class="detail-files">
+                ${files.map(file => `
+                    <div class="detail-file-item" onclick="previewFile('${file.id}')">
+                        <span class="file-icon">${getFileIcon(file.type)}</span>
+                        <span class="file-name">${file.name}</span>
+                        <span class="file-size">${file.size}</span>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
+}
+
+/**
+ * 预览文件
+ * @param {string} fileId - 文件ID
+ */
+function previewFile(fileId) {
+    const note = selectedNote;
+    if (!note || !note.files) return;
+    
+    const file = note.files.find(f => f.id === fileId);
+    if (!file) return;
+    
+    if (file.type.startsWith('image/')) {
+        // 图片文件显示预览
+        const modal = document.createElement('div');
+        modal.className = 'preview-modal';
+        modal.innerHTML = `
+            <div class="preview-overlay" onclick="closePreview()"></div>
+            <div class="preview-content">
+                <button class="preview-close" onclick="closePreview()">✕</button>
+                <img src="${file.data}" alt="${file.name}" />
+            </div>
+        `;
+        document.body.appendChild(modal);
+        modal.classList.add('show');
+    } else {
+        // 非图片文件提供下载链接
+        const link = document.createElement('a');
+        link.href = file.data;
+        link.download = file.name;
+        link.click();
+    }
+}
+
+/**
+ * 关闭文件预览模态框
+ */
+function closePreview() {
+    const modal = document.querySelector('.preview-modal');
+    if (modal) {
+        modal.remove();
+    }
 }
 
 /**
@@ -339,6 +416,9 @@ function showAddNote() {
     document.getElementById('noteCategory').value = 'learn';
     document.getElementById('noteTags').value = '';
     document.getElementById('noteContent').value = '';
+    // 重置上传文件列表
+    uploadedFiles = [];
+    document.getElementById('fileList').innerHTML = '';
     // 显示模态框和遮罩层
     document.getElementById('modal').classList.add('show');
     document.getElementById('modalOverlay').classList.add('show');
@@ -361,6 +441,9 @@ function editNote() {
     document.getElementById('noteCategory').value = selectedNote.category;
     document.getElementById('noteTags').value = selectedNote.tags.join(', ');
     document.getElementById('noteContent').value = selectedNote.content;
+    // 加载已有的文件列表
+    uploadedFiles = selectedNote.files || [];
+    renderFileList();
     // 显示模态框和遮罩层
     document.getElementById('modal').classList.add('show');
     document.getElementById('modalOverlay').classList.add('show');
@@ -376,6 +459,105 @@ function closeModal() {
     document.getElementById('modalOverlay').classList.remove('show');
     // 重置编辑ID
     editingNoteId = null;
+    // 清空上传文件列表
+    uploadedFiles = [];
+}
+
+/**
+ * 处理文件上传
+ * 将文件转换为Base64格式并添加到上传列表
+ * @param {Event} event - 文件选择事件
+ */
+function handleFileUpload(event) {
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
+    
+    Array.from(files).forEach(file => {
+        // 检查文件大小（限制5MB）
+        if (file.size > 5 * 1024 * 1024) {
+            alert('文件大小不能超过5MB');
+            return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const fileData = {
+                id: Date.now().toString() + Math.random(),
+                name: file.name,
+                type: file.type,
+                size: formatFileSize(file.size),
+                data: e.target.result // Base64编码的文件数据
+            };
+            uploadedFiles.push(fileData);
+            renderFileList();
+        };
+        
+        // 根据文件类型选择读取方式
+        if (file.type.startsWith('image/')) {
+            reader.readAsDataURL(file);
+        } else {
+            reader.readAsDataURL(file);
+        }
+    });
+    
+    // 重置文件输入
+    event.target.value = '';
+}
+
+/**
+ * 格式化文件大小
+ * @param {number} bytes - 文件大小（字节）
+ * @returns {string} 格式化后的文件大小字符串
+ */
+function formatFileSize(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+}
+
+/**
+ * 渲染已上传文件列表
+ */
+function renderFileList() {
+    const fileList = document.getElementById('fileList');
+    
+    if (uploadedFiles.length === 0) {
+        fileList.innerHTML = '';
+        return;
+    }
+    
+    fileList.innerHTML = uploadedFiles.map(file => `
+        <div class="file-item">
+            <span class="file-icon">${getFileIcon(file.type)}</span>
+            <div class="file-info">
+                <span class="file-name">${file.name}</span>
+                <span class="file-size">${file.size}</span>
+            </div>
+            <button class="file-remove" onclick="removeFile('${file.id}')">✕</button>
+        </div>
+    `).join('');
+}
+
+/**
+ * 获取文件图标
+ * @param {string} type - 文件类型
+ * @returns {string} 对应的emoji图标
+ */
+function getFileIcon(type) {
+    if (type.startsWith('image/')) return '🖼️';
+    if (type.includes('pdf')) return '📕';
+    if (type.includes('word') || type.includes('doc')) return '📘';
+    if (type.includes('text')) return '📄';
+    return '📎';
+}
+
+/**
+ * 移除已上传的文件
+ * @param {string} fileId - 文件ID
+ */
+function removeFile(fileId) {
+    uploadedFiles = uploadedFiles.filter(f => f.id !== fileId);
+    renderFileList();
 }
 
 /**
@@ -409,6 +591,7 @@ function saveNote(event) {
                 category,         // 更新分类
                 tags,             // 更新标签
                 content,          // 更新内容
+                files: uploadedFiles,  // 更新文件列表
                 updatedAt: now    // 更新时间
             };
         }
@@ -420,6 +603,7 @@ function saveNote(event) {
             category,                   // 分类
             tags,                       // 标签
             content,                    // 内容
+            files: uploadedFiles,       // 文件列表
             createdAt: now,             // 创建时间
             updatedAt: now              // 更新时间
         };

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<!-- HTML5文档声明，指定文档类型 -->
+<html lang="zh-CN">
+<!-- 网页根元素，设置语言为简体中文 -->
+<head>
+    <!-- 字符编码声明，使用UTF-8编码支持中文 -->
+    <meta charset="UTF-8">
+    <!-- 视口设置，确保移动端正确显示，初始缩放比例为1.0 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 网页标题，显示在浏览器标签上 -->
+    <title>Python知识外脑</title>
+    <!-- 引入外部CSS样式文件 -->
+    <link rel="stylesheet" href="styles.css">
+    <!-- 引入Google字体，使用思源黑体字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- 应用主容器，包含所有页面内容 -->
+    <div class="app-container">
+        <!-- 页面头部导航栏 -->
+        <header class="header">
+            <div class="header-content">
+                <!-- Logo区域 -->
+                <div class="logo">
+                    <span class="logo-icon">📚</span> <!-- Logo图标 -->
+                    <h1>Python知识外脑</h1> <!-- 网站标题 -->
+                </div>
+                <!-- 头部操作按钮区域 -->
+                <div class="header-actions">
+                    <!-- 新建笔记按钮，点击触发showAddNote函数 -->
+                    <button class="btn btn-primary" onclick="showAddNote()">
+                        <span>+</span> 新建笔记
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- 主内容区域 -->
+        <div class="main-content">
+            <!-- 侧边栏，包含搜索框和分类导航 -->
+            <div class="sidebar">
+                <!-- 搜索框容器 -->
+                <div class="search-box">
+                    <!-- 搜索输入框，键盘松开时触发filterNotes函数 -->
+                    <input type="text" id="searchInput" placeholder="搜索笔记..." onkeyup="filterNotes()">
+                    <span class="search-icon">🔍</span> <!-- 搜索图标 -->
+                </div>
+                <!-- 分类导航菜单 -->
+                <nav class="category-nav">
+                    <h3>分类</h3> <!-- 导航标题 -->
+                    <!-- 全部分类按钮，点击触发filterByCategory函数 -->
+                    <button class="category-btn active" data-category="all" onclick="filterByCategory('all')">
+                        <span>📋</span> 全部
+                    </button>
+                    <!-- 所学所思分类按钮 -->
+                    <button class="category-btn" data-category="learn" onclick="filterByCategory('learn')">
+                        <span>💡</span> 所学所思
+                    </button>
+                    <!-- 作业分类按钮 -->
+                    <button class="category-btn" data-category="homework" onclick="filterByCategory('homework')">
+                        <span>📝</span> 作业
+                    </button>
+                    <!-- 易错题分类按钮 -->
+                    <button class="category-btn" data-category="mistakes" onclick="filterByCategory('mistakes')">
+                        <span>⚠️</span> 易错题
+                    </button>
+                    <!-- 实用链接分类按钮 -->
+                    <button class="category-btn" data-category="links" onclick="filterByCategory('links')">
+                        <span>🔗</span> 实用链接
+                    </button>
+                </nav>
+            </div>
+
+            <!-- 笔记展示区域 -->
+            <div class="notes-area">
+                <!-- 笔记区域头部 -->
+                <div class="notes-header">
+                    <h2 id="categoryTitle">全部笔记</h2> <!-- 分类标题，动态更新 -->
+                    <span class="notes-count" id="notesCount">0 篇</span> <!-- 笔记数量统计 -->
+                </div>
+                <!-- 笔记网格容器，动态渲染笔记卡片 -->
+                <div class="notes-grid" id="notesGrid">
+                </div>
+            </div>
+
+            <!-- 笔记详情面板 -->
+            <div class="detail-panel" id="detailPanel">
+                <!-- 详情面板头部 -->
+                <div class="detail-header">
+                    <h2 id="detailTitle">笔记详情</h2> <!-- 笔记标题 -->
+                    <!-- 关闭按钮，点击触发closeDetail函数 -->
+                    <button class="close-btn" onclick="closeDetail()">✕</button>
+                </div>
+                <!-- 详情内容区域 -->
+                <div class="detail-content">
+                    <div class="note-meta">
+                        <!-- 分类标签 -->
+                        <span class="category-badge" id="detailCategory"></span>
+                        <!-- 更新时间 -->
+                        <span class="note-date" id="detailDate"></span>
+                    </div>
+                    <!-- 标签列表 -->
+                    <div class="note-tags" id="detailTags"></div>
+                    <!-- 笔记正文内容 -->
+                    <div class="note-body" id="detailBody"></div>
+                </div>
+                <!-- 详情操作按钮 -->
+                <div class="detail-actions">
+                    <!-- 编辑按钮，点击触发editNote函数 -->
+                    <button class="btn btn-secondary" onclick="editNote()">编辑</button>
+                    <!-- 删除按钮，点击触发deleteNote函数 -->
+                    <button class="btn btn-danger" onclick="deleteNote()">删除</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 模态框遮罩层，点击触发closeModal函数 -->
+        <div class="modal-overlay" id="modalOverlay" onclick="closeModal()"></div>
+        <!-- 模态框容器，用于新建/编辑笔记 -->
+        <div class="modal" id="modal">
+            <!-- 模态框头部 -->
+            <div class="modal-header">
+                <h2 id="modalTitle">新建笔记</h2> <!-- 模态框标题，动态更新 -->
+                <!-- 关闭按钮 -->
+                <button class="close-btn" onclick="closeModal()">✕</button>
+            </div>
+            <!-- 笔记表单，提交时触发saveNote函数 -->
+            <form class="note-form" id="noteForm" onsubmit="saveNote(event)">
+                <!-- 标题输入框 -->
+                <div class="form-group">
+                    <label>标题</label>
+                    <input type="text" id="noteTitle" required placeholder="输入笔记标题">
+                </div>
+                <!-- 分类选择框 -->
+                <div class="form-group">
+                    <label>分类</label>
+                    <select id="noteCategory" required>
+                        <option value="learn">💡 所学所思</option>
+                        <option value="homework">📝 作业</option>
+                        <option value="mistakes">⚠️ 易错题</option>
+                        <option value="links">🔗 实用链接</option>
+                    </select>
+                </div>
+                <!-- 标签输入框 -->
+                <div class="form-group">
+                    <label>标签</label>
+                    <input type="text" id="noteTags" placeholder="多个标签用逗号分隔">
+                </div>
+                <!-- 内容输入框 -->
+                <div class="form-group">
+                    <label>内容</label>
+                    <textarea id="noteContent" required placeholder="输入笔记内容..." rows="6"></textarea>
+                </div>
+                <!-- 表单操作按钮 -->
+                <div class="form-actions">
+                    <!-- 取消按钮 -->
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">取消</button>
+                    <!-- 保存按钮 -->
+                    <button type="submit" class="btn btn-primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 引入外部JavaScript文件 -->
+    <script src="script.js"></script>
+</body>
+</html>

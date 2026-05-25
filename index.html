@@ -149,7 +149,21 @@
                 <!-- 内容输入框 -->
                 <div class="form-group">
                     <label>内容</label>
-                    <textarea id="noteContent" required placeholder="输入笔记内容..." rows="6"></textarea>
+                    <textarea id="noteContent" placeholder="输入笔记内容..." rows="6"></textarea>
+                </div>
+                <!-- 文件上传区域 -->
+                <div class="form-group">
+                    <label>附件</label>
+                    <div class="file-upload" id="fileUpload">
+                        <input type="file" id="noteFiles" multiple accept="image/*,.pdf,.doc,.docx,.txt" onchange="handleFileUpload(event)">
+                        <div class="upload-area">
+                            <span class="upload-icon">📁</span>
+                            <span class="upload-text">点击或拖拽上传文件</span>
+                            <span class="upload-hint">支持图片、PDF、文档等格式</span>
+                        </div>
+                    </div>
+                    <!-- 已上传文件列表 -->
+                    <div class="file-list" id="fileList"></div>
                 </div>
                 <!-- 表单操作按钮 -->
                 <div class="form-actions">

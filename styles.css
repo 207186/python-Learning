@@ -619,6 +619,240 @@ body {
     }
 }
 
+/* 文件上传区域 */
+.file-upload {
+    position: relative;       /* 相对定位 */
+    border: 2px dashed #e2e8f0; /* 虚线边框 */
+    border-radius: 12px;     /* 圆角 */
+    overflow: hidden;         /* 隐藏溢出 */
+    cursor: pointer;          /* 手型指针 */
+    transition: all 0.3s ease; /* 过渡动画 */
+}
+
+/* 文件上传区域悬停效果 */
+.file-upload:hover {
+    border-color: #667eea;   /* 边框变为主题色 */
+    background: rgba(102, 126, 234, 0.05); /* 浅背景 */
+}
+
+/* 文件上传区域聚焦效果 */
+.file-upload input:focus + .upload-area {
+    border-color: #667eea;   /* 边框变为主题色 */
+}
+
+/* 上传区域 */
+.upload-area {
+    padding: 24px;           /* 内边距 */
+    display: flex;           /* 弹性布局 */
+    flex-direction: column;  /* 垂直排列 */
+    align-items: center;     /* 水平居中 */
+    gap: 8px;                /* 间距 */
+}
+
+/* 上传图标 */
+.upload-icon {
+    font-size: 32px;         /* 图标大小 */
+    opacity: 0.6;            /* 透明度 */
+}
+
+/* 上传文字 */
+.upload-text {
+    font-size: 15px;         /* 字号 */
+    font-weight: 500;        /* 中等粗细 */
+    color: #475569;          /* 灰色文字 */
+}
+
+/* 上传提示 */
+.upload-hint {
+    font-size: 13px;         /* 字号 */
+    color: #94a3b8;          /* 浅灰色文字 */
+}
+
+/* 文件输入框隐藏 */
+.file-upload input {
+    position: absolute;      /* 绝对定位 */
+    top: 0;                  /* 顶部 */
+    left: 0;                 /* 左侧 */
+    width: 100%;             /* 宽度100% */
+    height: 100%;            /* 高度100% */
+    opacity: 0;              /* 透明 */
+    cursor: pointer;         /* 手型指针 */
+}
+
+/* 文件列表 */
+.file-list {
+    margin-top: 12px;        /* 上边距 */
+    display: flex;           /* 弹性布局 */
+    flex-direction: column;  /* 垂直排列 */
+    gap: 8px;                /* 间距 */
+}
+
+/* 文件项 */
+.file-item {
+    display: flex;           /* 弹性布局 */
+    align-items: center;     /* 垂直居中 */
+    gap: 12px;               /* 间距 */
+    padding: 12px;           /* 内边距 */
+    background: #f8fafc;     /* 浅灰色背景 */
+    border-radius: 10px;     /* 圆角 */
+}
+
+/* 文件图标 */
+.file-icon {
+    font-size: 24px;         /* 图标大小 */
+}
+
+/* 文件信息 */
+.file-info {
+    flex: 1;                 /* 占据剩余空间 */
+    display: flex;           /* 弹性布局 */
+    flex-direction: column;  /* 垂直排列 */
+    gap: 2px;                /* 间距 */
+}
+
+/* 文件名 */
+.file-name {
+    font-size: 14px;         /* 字号 */
+    font-weight: 500;        /* 中等粗细 */
+    color: #334155;          /* 深灰色文字 */
+}
+
+/* 文件大小 */
+.file-size {
+    font-size: 12px;         /* 字号 */
+    color: #94a3b8;          /* 浅灰色文字 */
+}
+
+/* 文件删除按钮 */
+.file-remove {
+    background: #f1f5f9;     /* 浅灰色背景 */
+    border: none;            /* 无边框 */
+    width: 28px;             /* 宽度 */
+    height: 28px;            /* 高度 */
+    border-radius: 8px;      /* 圆角 */
+    font-size: 14px;         /* 字号 */
+    color: #94a3b8;          /* 灰色文字 */
+    cursor: pointer;         /* 手型指针 */
+    transition: all 0.2s ease; /* 过渡动画 */
+}
+
+/* 文件删除按钮悬停效果 */
+.file-remove:hover {
+    background: #ef4444;     /* 红色背景 */
+    color: white;            /* 白色文字 */
+}
+
+/* 详情面板附件区域 */
+.detail-section {
+    margin-top: 20px;        /* 上边距 */
+    padding-top: 20px;       /* 上边距 */
+    border-top: 1px solid #e2e8f0; /* 顶部边框 */
+}
+
+/* 详情附件标题 */
+.detail-section h4 {
+    font-size: 14px;         /* 字号 */
+    font-weight: 600;        /* 半粗体 */
+    color: #334155;          /* 深灰色文字 */
+    margin-bottom: 12px;     /* 下边距 */
+}
+
+/* 详情附件列表 */
+.detail-files {
+    display: flex;           /* 弹性布局 */
+    flex-direction: column;  /* 垂直排列 */
+    gap: 8px;                /* 间距 */
+}
+
+/* 详情附件项 */
+.detail-file-item {
+    display: flex;           /* 弹性布局 */
+    align-items: center;     /* 垂直居中 */
+    gap: 10px;               /* 间距 */
+    padding: 10px 12px;      /* 内边距 */
+    background: #f8fafc;     /* 浅灰色背景 */
+    border-radius: 8px;      /* 圆角 */
+    cursor: pointer;         /* 手型指针 */
+    transition: all 0.2s ease; /* 过渡动画 */
+}
+
+/* 详情附件项悬停效果 */
+.detail-file-item:hover {
+    background: #f1f5f9;     /* 稍深灰色背景 */
+}
+
+/* 文件预览模态框 */
+.preview-modal {
+    position: fixed;         /* 固定定位 */
+    top: 0;                  /* 顶部 */
+    left: 0;                 /* 左侧 */
+    right: 0;                /* 右侧 */
+    bottom: 0;               /* 底部 */
+    z-index: 2000;           /* 层级 */
+    display: none;           /* 默认隐藏 */
+}
+
+/* 文件预览模态框显示状态 */
+.preview-modal.show {
+    display: flex;           /* 弹性布局 */
+    align-items: center;     /* 垂直居中 */
+    justify-content: center; /* 水平居中 */
+}
+
+/* 文件预览遮罩层 */
+.preview-overlay {
+    position: absolute;      /* 绝对定位 */
+    top: 0;                  /* 顶部 */
+    left: 0;                 /* 左侧 */
+    right: 0;                /* 右侧 */
+    bottom: 0;               /* 底部 */
+    background: rgba(0, 0, 0, 0.8); /* 半透明黑色背景 */
+}
+
+/* 文件预览内容 */
+.preview-content {
+    position: relative;      /* 相对定位 */
+    max-width: 90vw;         /* 最大宽度90%视口宽度 */
+    max-height: 90vh;        /* 最大高度90%视口高度 */
+    padding: 20px;           /* 内边距 */
+}
+
+/* 文件预览图片 */
+.preview-content img {
+    max-width: 100%;         /* 最大宽度100% */
+    max-height: 80vh;        /* 最大高度80%视口高度 */
+    border-radius: 12px;     /* 圆角 */
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); /* 阴影 */
+}
+
+/* 文件预览关闭按钮 */
+.preview-close {
+    position: absolute;      /* 绝对定位 */
+    top: -40px;              /* 距离顶部-40px */
+    right: 0;                /* 右侧 */
+    background: rgba(255, 255, 255, 0.2); /* 半透明白色背景 */
+    border: none;            /* 无边框 */
+    width: 36px;             /* 宽度 */
+    height: 36px;            /* 高度 */
+    border-radius: 50%;      /* 圆形 */
+    font-size: 18px;         /* 字号 */
+    color: white;            /* 白色文字 */
+    cursor: pointer;         /* 手型指针 */
+    transition: all 0.2s ease; /* 过渡动画 */
+}
+
+/* 文件预览关闭按钮悬停效果 */
+.preview-close:hover {
+    background: rgba(255, 255, 255, 0.3); /* 更不透明的背景 */
+}
+
+/* 响应式布局：屏幕宽度小于1200px时 */
+@media (max-width: 1200px) {
+    .detail-panel {
+        display: none;       /* 隐藏详情面板 */
+    }
+}
+
 /* 响应式布局：屏幕宽度小于768px时 */
 @media (max-width: 768px) {
     .header-content {
